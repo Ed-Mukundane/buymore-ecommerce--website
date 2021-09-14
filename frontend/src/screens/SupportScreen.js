@@ -22,58 +22,58 @@ export default function SupportScreen() {
   const { userInfo } = userSignin;
 
   useEffect(() => {
-    if (uiMessagesRef.current) {
-      uiMessagesRef.current.scrollBy({
-        top: uiMessagesRef.current.clientHeight,
-        left: 0,
-        behavior: 'smooth',
-      });
-    }
+		if (uiMessagesRef.current) {
+			uiMessagesRef.current.scrollBy({
+				top: uiMessagesRef.current.clientHeight,
+				left: 0,
+				behavior: "smooth",
+			});
+		}
 
-    if (!socket) {
-      const sk = socketIOClient(ENDPOINT);
-      setSocket(sk);
-      sk.emit('onLogin', {
-        _id: userInfo._id,
-        name: userInfo.name,
-        isAdmin: userInfo.isAdmin,
-      });
-      sk.on('message', (data) => {
-        if (allSelectedUser._id === data._id) {
-          allMessages = [...allMessages, data];
-        } else {
-          const existUser = allUsers.find((user) => user._id === data._id);
-          if (existUser) {
-            allUsers = allUsers.map((user) =>
-              user._id === existUser._id ? { ...user, unread: true } : user
-            );
-            setUsers(allUsers);
-          }
-        }
-        setMessages(allMessages);
-      });
-      sk.on('updateUser', (updatedUser) => {
-        const existUser = allUsers.find((user) => user._id === updatedUser._id);
-        if (existUser) {
-          allUsers = allUsers.map((user) =>
-            user._id === existUser._id ? updatedUser : user
-          );
-          setUsers(allUsers);
-        } else {
-          allUsers = [...allUsers, updatedUser];
-          setUsers(allUsers);
-        }
-      });
-      sk.on('listUsers', (updatedUsers) => {
-        allUsers = updatedUsers;
-        setUsers(allUsers);
-      });
-      sk.on('selectUser', (user) => {
-        allMessages = user.messages;
-        setMessages(allMessages);
-      });
-    }
-  }, [messages, socket, users]);
+		if (!socket) {
+			const sk = socketIOClient(ENDPOINT);
+			setSocket(sk);
+			sk.emit("onLogin", {
+				_id: userInfo._id,
+				name: userInfo.name,
+				isAdmin: userInfo.isAdmin,
+			});
+			sk.on("message", (data) => {
+				if (allSelectedUser._id === data._id) {
+					allMessages = [...allMessages, data];
+				} else {
+					const existUser = allUsers.find((user) => user._id === data._id);
+					if (existUser) {
+						allUsers = allUsers.map((user) =>
+							user._id === existUser._id ? { ...user, unread: true } : user,
+						);
+						setUsers(allUsers);
+					}
+				}
+				setMessages(allMessages);
+			});
+			sk.on("updateUser", (updatedUser) => {
+				const existUser = allUsers.find((user) => user._id === updatedUser._id);
+				if (existUser) {
+					allUsers = allUsers.map((user) =>
+						user._id === existUser._id ? updatedUser : user,
+					);
+					setUsers(allUsers);
+				} else {
+					allUsers = [...allUsers, updatedUser];
+					setUsers(allUsers);
+				}
+			});
+			sk.on("listUsers", (updatedUsers) => {
+				allUsers = updatedUsers;
+				setUsers(allUsers);
+			});
+			sk.on("selectUser", (user) => {
+				allMessages = user.messages;
+				setMessages(allMessages);
+			});
+		}
+	}, [messages, socket, users, userInfo._id, userInfo.isAdmin, userInfo.name]);
 
   const selectUser = (user) => {
     allSelectedUser = user;
