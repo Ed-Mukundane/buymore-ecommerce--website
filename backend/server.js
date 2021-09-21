@@ -1,5 +1,5 @@
 import http from 'http';
-import { Server, Socket } from 'socket.io';
+import { SocketIO } from 'socket.io';
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
@@ -47,7 +47,7 @@ app.use((err, req, res, next) => {
 const port = process.env.PORT || 5000;
 
 const httpServer = http.Server(app);
-const io = new Server(httpServer, { cors: { origin: '*' } });
+const io = SocketIO(httpServer, { cors: { origin: '*' } });
 const users = [];
 
 io.on('connection', (socket) => {
